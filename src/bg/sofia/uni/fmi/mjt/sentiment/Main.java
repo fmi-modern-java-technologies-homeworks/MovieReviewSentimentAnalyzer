@@ -11,10 +11,10 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		try (InputStream stopwords = new FileInputStream("resources/stopwords.txt");
+		try (InputStream stopWords = new FileInputStream("resources/stopWords.txt");
 				InputStream reviews = new FileInputStream("resources/reviews.txt");
 				OutputStream reviewsOutput = new FileOutputStream("resources/reviews.txt", true)) {
-			MovieReviewSentimentAnalyzer movie = new MovieReviewSentimentAnalyzer(stopwords, reviews, reviewsOutput);
+			MovieReviewSentimentAnalyzer movie = new MovieReviewSentimentAnalyzer(stopWords, reviews, reviewsOutput);
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

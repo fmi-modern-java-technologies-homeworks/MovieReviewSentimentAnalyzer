@@ -24,7 +24,7 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
 
 	private static final double UNKNOWN = -1.0;
 	private static final double EPSILON = 0.01;
-	private static final double NEGATVIE = 0.5;
+	private static final double NEGATIVE = 0.5;
 	private static final double SOMEWHAT_NEGATIVE = 1.5;
 	private static final double NEUTRAL = 2.5;
 	private static final double SOMEWHAT_POSITIVE = 3.5;
@@ -34,16 +34,16 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
 	private Set<String> reviews;
 	private PrintStream streamForAppend;
 
-	public MovieReviewSentimentAnalyzer(InputStream stopwordsInput, InputStream reviewsInput,
+	public MovieReviewSentimentAnalyzer(InputStream stopWordsInput, InputStream reviewsInput,
 			OutputStream reviewsOutput) {
 
 		wordsFromReviews = new HashMap<>();
 		stopWords = new HashSet<>();
 		reviews = new HashSet<>();
 
-		try (BufferedReader bufferForStopwords = new BufferedReader(new InputStreamReader(stopwordsInput));
+		try (BufferedReader bufferForStopWords = new BufferedReader(new InputStreamReader(stopWordsInput));
 				BufferedReader bufferForReviews = new BufferedReader(new InputStreamReader(reviewsInput))) {
-			addStopWordsToSet(bufferForStopwords);
+			addStopWordsToSet(bufferForStopWords);
 			getReviewForTeach(bufferForReviews);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -51,10 +51,10 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
 		streamForAppend = new PrintStream(reviewsOutput);
 	}
 
-	private void addStopWordsToSet(BufferedReader bufferForStopwords) throws IOException {
-		while (bufferForStopwords.ready()) {
-			String lineOfStopwords = bufferForStopwords.readLine();
-			stopWords.add(lineOfStopwords.toLowerCase());
+	private void addStopWordsToSet(BufferedReader bufferForStopWords) throws IOException {
+		while (bufferForStopWords.ready()) {
+			String lineOfStopWords = bufferForStopWords.readLine();
+			stopWords.add(lineOfStopWords.toLowerCase());
 		}
 	}
 
@@ -79,23 +79,23 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
 		wordsFromReview.removeAll(Arrays.asList(""));
 	}
 
-	private void increasingRaitingOfWords(List<String> wordsFromReview, int raiting) {
+	private void increasingRatingOfWords(List<String> wordsFromReview, int rating) {
 		for (String wordFromReview : wordsFromReview) {
 
 			if (!wordsFromReviews.containsKey(wordFromReview)) {
 				wordsFromReviews.put(wordFromReview, new Word());
 			}
-			wordsFromReviews.get(wordFromReview).increasing(raiting);
+			wordsFromReviews.get(wordFromReview).increasing(rating);
 		}
 	}
 
 	private void teachTheAlgorithm(String review) {
 
-		int raiting = getRatingOfReview(review);
+		int rating = getRatingOfReview(review);
 		reviews.add(review.substring(2, review.length()));
 		List<String> wordsFromReview = splitTheWords(review.substring(2, review.length()).toLowerCase());
 		getOnlyWordsWithMeaning(wordsFromReview);
-		increasingRaitingOfWords(wordsFromReview, raiting);
+		increasingRatingOfWords(wordsFromReview, rating);
 
 	}
 
@@ -126,17 +126,17 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
 
 	@Override
 	public String getReviewSentimentAsName(String review) {
-		double reviewRaiting = getReviewSentiment(review);
-		if (reviewRaiting == UNKNOWN) {
+		double reviewRating = getReviewSentiment(review);
+		if (reviewRating == UNKNOWN) {
 			return "unknown";
 		}
-		if (reviewRaiting < NEGATVIE) {
+		if (reviewRating < NEGATIVE) {
 			return "negative";
-		} else if (reviewRaiting < SOMEWHAT_NEGATIVE) {
+		} else if (reviewRating < SOMEWHAT_NEGATIVE) {
 			return "somewhat negative";
-		} else if (reviewRaiting < NEUTRAL) {
+		} else if (reviewRating < NEUTRAL) {
 			return "neutral";
-		} else if (reviewRaiting < SOMEWHAT_POSITIVE) {
+		} else if (reviewRating < SOMEWHAT_POSITIVE) {
 			return "somewhat positive";
 		}
 		return "positive";
@@ -162,7 +162,7 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
 
 	private void isNCorrect(int n) {
 		if (n < 0) {
-			throw new IllegalArgumentException("Positvie number expected");
+			throw new IllegalArgumentException("Positive number expected");
 		}
 	}
 
@@ -196,7 +196,7 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
 
 		List<String> wordsFromReview = splitTheWords(review.toLowerCase());
 		getOnlyWordsWithMeaning(wordsFromReview);
-		increasingRaitingOfWords(wordsFromReview, sentimentValue);
+		increasingRatingOfWords(wordsFromReview, sentimentValue);
 		StringBuffer newReview = new StringBuffer(sentimentValue + " " + review + System.lineSeparator());
 		streamForAppend.append(newReview.toString());
 		streamForAppend.flush();
