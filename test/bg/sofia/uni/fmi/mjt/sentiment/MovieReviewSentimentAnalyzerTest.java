@@ -33,6 +33,11 @@ public class MovieReviewSentimentAnalyzerTest {
 
     private static final String REVIEW = "But it does n't leave you with much .	";
 
+
+    private static final String STOP_WORDS_RESOURCE = "resources/stopWords.txt";
+
+    private static final String REVIEWS_RESOURCE = "resources/reviews.txt";
+
     private MovieReviewSentimentAnalyzer analyzer;
 
     private InputStream reviewsStream;
@@ -40,40 +45,40 @@ public class MovieReviewSentimentAnalyzerTest {
     private OutputStream resultStream;
 
     @Before
-    public void init() throws FileNotFoundException {
-        stopWordsStream = new FileInputStream("resources/stopWords.txt");
-        reviewsStream = new FileInputStream("resources/reviews.txt");
-        resultStream = new FileOutputStream("resources/reviews.txt", true);
+    public void initialize() throws FileNotFoundException {
+        stopWordsStream = new FileInputStream(STOP_WORDS_RESOURCE);
+        reviewsStream = new FileInputStream(REVIEWS_RESOURCE);
+        resultStream = new FileOutputStream(REVIEWS_RESOURCE, true);
         analyzer = new MovieReviewSentimentAnalyzer(stopWordsStream, reviewsStream, resultStream);
     }
 
     @Test
     public void testIsUnknownReviewSentimental() {
-        String review = new String("The film was outstanding");
+        String review = "The film was outstanding";
         assertEquals(UNKNOWN, analyzer.getReviewSentiment(review), DELTA);
     }
 
     @Test
     public void testIsCorrectReviewSentimental() {
-        String review = new String("You could hate or like it");
+        String review = "You could hate or like it";
         assertEquals(2.0, analyzer.getReviewSentiment(review), DELTA);
     }
 
     @Test
     public void testIsNeutralReviewSentimentalAsName() {
-        String review = new String("You could hate or like it");
+        String review = "You could hate or like it";
         assertEquals("neutral", analyzer.getReviewSentimentAsName(review));
     }
 
     @Test
     public void testIsSomewhatPositiveReviewSentimentalAsName() {
-        String review = new String("Proportions earnest juicy.");
+        String review = "Proportions earnest juicy.";
         assertEquals("somewhat positive", analyzer.getReviewSentimentAsName(review));
     }
 
     @Test
     public void testIsNegativeReviewSentimentalAsName() {
-        String review = new String("Would have a hard time sitting through this one, hate it .");
+        String review = "Would have a hard time sitting through this one, hate it .";
         assertNotEquals("somewhat positive", analyzer.getReviewSentimentAsName(review));
     }
 
